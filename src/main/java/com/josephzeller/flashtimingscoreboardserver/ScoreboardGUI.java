@@ -5,8 +5,10 @@
  */
 package com.josephzeller.flashtimingscoreboardserver;
 
-import javax.swing.DefaultListModel;
-import javax.swing.UIManager;
+import com.josephzeller.flashtimingscoreboardserver.object.ApplicationState;
+
+import javax.swing.*;
+import java.io.File;
 
 /**
  *
@@ -17,7 +19,10 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     /**
      * Creates new form ScoreboardGUI
      */
-    public ScoreboardGUI() {
+    ApplicationState appState;
+
+    public ScoreboardGUI(ApplicationState appState) {
+        this.appState = appState;
         initComponents();
     }
 
@@ -46,7 +51,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         openScoreboardButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        selectFolderButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -55,6 +60,12 @@ public class ScoreboardGUI extends javax.swing.JFrame {
 
         fileList.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         fileList.setModel(new DefaultListModel<>());
+        fileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        fileList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fileListMouseClicked(evt);
+            }
+        });
         fileListScrollPane.setViewportView(fileList);
 
         raceList.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
@@ -68,8 +79,18 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         jLabel2.setText("Races");
 
         clearDisplayButton.setText("Clear Display");
+        clearDisplayButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearDisplayButtonActionPerformed(evt);
+            }
+        });
 
         mergeButton.setText("Merge Races");
+        mergeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mergeButtonActionPerformed(evt);
+            }
+        });
 
         forgetButton.setText("Forget Race");
         forgetButton.addActionListener(new java.awt.event.ActionListener() {
@@ -87,16 +108,32 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         });
 
         displayButton.setText("Display Race on Scoreboard");
+        displayButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                displayButtonActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Double click file name to copy it to other panel.");
 
         jLabel4.setText("Ctrl+Click to select multiple races.");
 
         openScoreboardButton.setText("Open Scoreboard in Browser");
+        openScoreboardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openScoreboardButtonActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Current Folder: Unselected");
+        jLabel5.setMaximumSize(new java.awt.Dimension(940, 14));
 
-        jButton1.setText("Select Folder");
+        selectFolderButton.setText("Select Folder");
+        selectFolderButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectFolderButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -105,14 +142,13 @@ public class ScoreboardGUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(153, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(fileListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel3)))
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(selectFolderButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(76, 76, 76)
@@ -138,11 +174,17 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(clearDisplayButton)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 940, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(54, 54, 54)
+                .addGap(22, 22, 22)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
@@ -151,10 +193,6 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(fileListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(raceListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -162,10 +200,12 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                                 .addComponent(mergeButton)
                                 .addGap(12, 12, 12)
                                 .addComponent(forgetButton))
-                            .addComponent(displayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(29, 29, 29)
+                            .addComponent(displayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(fileListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(selectFolderButton)))
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckBox1)
                     .addComponent(clearDisplayButton)
@@ -205,6 +245,44 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
+    private void selectFolderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectFolderButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Choose directory");
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            appState.selectedFolder = chooser.getSelectedFile().toURI();
+            jLabel5.setText("Current Folder: " + appState.selectedFolder.toASCIIString());
+            refreshFileList();
+        }
+    }//GEN-LAST:event_selectFolderButtonActionPerformed
+
+    private void mergeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mergeButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_mergeButtonActionPerformed
+
+    private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_displayButtonActionPerformed
+
+    private void openScoreboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openScoreboardButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_openScoreboardButtonActionPerformed
+
+    private void clearDisplayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDisplayButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_clearDisplayButtonActionPerformed
+
+    private void fileListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fileListMouseClicked
+        if (evt.getClickCount() == 2)
+        {
+            int i = fileList.locationToIndex(evt.getPoint());
+            System.out.println(fileList.getModel().getElementAt(i));
+            //TODO Create race from file and display it in Race.
+        }
+    }//GEN-LAST:event_fileListMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -230,7 +308,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ScoreboardGUI gui = new ScoreboardGUI();
+                ScoreboardGUI gui = new ScoreboardGUI(new ApplicationState());
                 gui.setVisible(true);
                 gui.setResizable(false);
                 
@@ -239,13 +317,28 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         });
     }
 
+    public void refreshFileList()
+    {
+        if (appState == null || appState.selectedFolder == null)
+            return;
+        File directory = new File(appState.selectedFolder);
+        String[] fileNames = directory.list();
+        ((DefaultListModel) fileList.getModel()).removeAllElements();
+        for (String s : fileNames)
+        {
+            if (s.endsWith(".lif"))
+            {
+                ((DefaultListModel) fileList.getModel()).addElement(s);
+            }
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearDisplayButton;
     private javax.swing.JButton displayButton;
     private javax.swing.JList<String> fileList;
     private javax.swing.JScrollPane fileListScrollPane;
     private javax.swing.JButton forgetButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -260,5 +353,6 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     private javax.swing.JButton openScoreboardButton;
     private javax.swing.JList<String> raceList;
     private javax.swing.JScrollPane raceListScrollPane;
+    private javax.swing.JButton selectFolderButton;
     // End of variables declaration//GEN-END:variables
 }
