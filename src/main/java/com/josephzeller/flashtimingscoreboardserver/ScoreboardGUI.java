@@ -6,9 +6,14 @@
 package com.josephzeller.flashtimingscoreboardserver;
 
 import com.josephzeller.flashtimingscoreboardserver.object.ApplicationState;
+import com.josephzeller.flashtimingscoreboardserver.object.Race;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -20,6 +25,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
      * Creates new form ScoreboardGUI
      */
     ApplicationState appState;
+    Timer timer;
 
     public ScoreboardGUI(ApplicationState appState) {
         this.appState = appState;
@@ -238,6 +244,12 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void forgetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forgetButtonActionPerformed
+        if (raceList.getSelectedIndex() == -1)
+        {
+            return;
+        }
+
+        ((DefaultListModel) raceList.getModel()).remove(raceList.getSelectedIndex());
         // TODO add your handling code here:
     }//GEN-LAST:event_forgetButtonActionPerformed
 
@@ -252,10 +264,25 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         chooser.setDialogTitle("Choose directory");
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            appState.selectedFolder = chooser.getSelectedFile().toURI();
-            jLabel5.setText("Current Folder: " + appState.selectedFolder.toASCIIString());
+            appState.selectedFolder = chooser.getSelectedFile();
+            jLabel5.setText("Current Folder: " + appState.selectedFolder.getPath());
             refreshFileList();
         }
+
+        //Create a repeating task that refreshes our file list.
+        if (timer != null)
+        {
+            timer.cancel();
+        }
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                refreshFileList();
+            }
+        }, 0, 5000);
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
     private void mergeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mergeButtonActionPerformed
@@ -278,7 +305,57 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         if (evt.getClickCount() == 2)
         {
             int i = fileList.locationToIndex(evt.getPoint());
-            System.out.println(fileList.getModel().getElementAt(i));
+
+            Race race = null;
+            try
+            {
+                race = Race.fromFile(new File(appState.selectedFolder + "\\" + fileList.getModel().getElementAt(i)));
+            }
+            catch (FileNotFoundException e)
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Error. Is the file still there? Did it get moved, renamed, or deleted?",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                refreshFileList();
+            }
+            catch (ParseException e)
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Error parsing times. Is one of them in an incorrect format? This program does not support times > 24hrs.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                refreshFileList();
+            }
+            if (race == null)
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Error. Is the file still there? Did it get moved, renamed, or deleted?",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                refreshFileList();
+            }
+
+            String newRaceName = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Title of race:",
+                    "Name this Race",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    race.name);
+
+            if (newRaceName == null) //If the user presses cancel.
+            {
+                return;
+            }
+
+            if (newRaceName.length() > 0 && !newRaceName.equals(race.name))
+            {
+                race.name = newRaceName;
+            }
+
+            ((DefaultListModel) raceList.getModel()).addElement(race);
             //TODO Create race from file and display it in Race.
         }
     }//GEN-LAST:event_fileListMouseClicked
@@ -317,11 +394,12 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         });
     }
 
+    //TODO Revamp file refreshing to add new items to the top of the list.
     public void refreshFileList()
     {
         if (appState == null || appState.selectedFolder == null)
             return;
-        File directory = new File(appState.selectedFolder);
+        File directory = appState.selectedFolder;
         String[] fileNames = directory.list();
         ((DefaultListModel) fileList.getModel()).removeAllElements();
         for (String s : fileNames)
