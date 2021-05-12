@@ -101,6 +101,21 @@ public class Race
         return new Race(name, lanes, creationDate);
     }
 
+    public static Race mergeRaces(String mergedName, Race[] races)
+    {
+        ArrayList<Lane> lanes = new ArrayList<>();
+        for (Race race : races)
+        {
+            for (Lane lane : race.lanes)
+            {
+                lanes.add(lane);
+            }
+        }
+        Lane[] lanesArray = lanes.toArray(new Lane[lanes.size()]);
+        sortLanes(lanesArray);
+        return new Race(mergedName, lanesArray, new Date());
+    }
+
     /*
         This is a selection sort. Technically inefficient but really
         easy to write (plus we're only sorting like 20 items max at a time).

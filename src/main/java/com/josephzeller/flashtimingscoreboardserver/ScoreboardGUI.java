@@ -6,6 +6,7 @@
 package com.josephzeller.flashtimingscoreboardserver;
 
 import com.josephzeller.flashtimingscoreboardserver.object.ApplicationState;
+import com.josephzeller.flashtimingscoreboardserver.object.Lane;
 import com.josephzeller.flashtimingscoreboardserver.object.Race;
 
 import javax.swing.*;
@@ -286,6 +287,41 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_selectFolderButtonActionPerformed
 
     private void mergeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mergeButtonActionPerformed
+        if (raceList.getSelectedIndices().length < 2)
+        {
+            JOptionPane.showMessageDialog(this,
+                    "Select two races (using ctrl+click) to merge them!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Race[] races = new Race[raceList.getSelectedIndices().length];
+        for (int i = 0; i < raceList.getSelectedIndices().length; i++) //TODO Is there a cleaner way?
+        {
+            races[i] = (Race) ((DefaultListModel) raceList.getModel()).getElementAt(raceList.getSelectedIndices()[i]);
+        }
+
+        String newRaceName = (String) JOptionPane.showInputDialog(
+                this,
+                "Title of new merged race:",
+                "Name this Race",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                races[0].name);
+
+        if (newRaceName == null || newRaceName.equals("") || newRaceName.length() == 0) //If the user presses cancel or name is empty.
+        {
+            return;
+        }
+
+        Race newRace = Race.mergeRaces(newRaceName, races);
+        for (Race race : races) //"Forget" all the original races we're merging
+        {
+            ((DefaultListModel) raceList.getModel()).removeElement(race);
+        }
+        ((DefaultListModel) raceList.getModel()).addElement(newRace); //Add the newly merged race.
         // TODO add your handling code here:
     }//GEN-LAST:event_mergeButtonActionPerformed
 
@@ -318,6 +354,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 refreshFileList();
+                return;
             }
             catch (ParseException e)
             {
@@ -326,6 +363,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 refreshFileList();
+                return;
             }
             if (race == null)
             {
@@ -334,6 +372,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 refreshFileList();
+                return;
             }
 
             String newRaceName = (String) JOptionPane.showInputDialog(
