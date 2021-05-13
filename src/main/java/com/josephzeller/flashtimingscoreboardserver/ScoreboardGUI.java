@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.josephzeller.flashtimingscoreboardserver;
 
 import com.josephzeller.flashtimingscoreboardserver.object.ApplicationState;
-import com.josephzeller.flashtimingscoreboardserver.object.Lane;
 import com.josephzeller.flashtimingscoreboardserver.object.Race;
 
 import javax.swing.*;
@@ -326,6 +320,43 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_mergeButtonActionPerformed
 
     private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_displayButtonActionPerformed
+        //If more than one race is selected
+        if (raceList.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(this,
+                    "You must select a race before clicking the display button.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (raceList.getSelectedIndices().length > 1)
+        {
+            JOptionPane.showMessageDialog(this,
+                    "Only one race can be displayed at a time. Please deselect one option.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Race race = (Race) ((DefaultListModel) raceList.getModel()).getElementAt(raceList.getSelectedIndex());
+        if (jCheckBox1.isSelected())
+        {
+            int selectedOption = JOptionPane.showOptionDialog(this,
+                    "Are you sure you want to display the race \"" + race.name + "\"?",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Yes", "No"},
+                    null);
+
+            if (selectedOption != 0)
+            {
+                return;
+            }
+        }
+        appState.scoreboardSocket.displayRace(race);
         // TODO add your handling code here:
     }//GEN-LAST:event_displayButtonActionPerformed
 

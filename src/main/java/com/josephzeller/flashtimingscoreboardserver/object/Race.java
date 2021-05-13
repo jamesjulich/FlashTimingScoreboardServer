@@ -54,10 +54,10 @@ public class Race
         {
             String[] columns = rows.get(i).split(","); //Separate the parts of each row entry
 
-            if (i == 0)
+            if (i == 0) //If we're currently parsing the first line
             {
-                name = columns[3];
-                lanes = new Lane[rows.size() - 1];
+                name = columns[3]; //Grab the name of the race
+                lanes = new Lane[rows.size() - 1]; //Instantiate lanes variable
                 continue;
             }
 
@@ -95,7 +95,7 @@ public class Race
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //Tells the dateFormat to parse the time without a timezone offset.
             time = dateFormat.parse(columns[6]);
 
-            lanes[i - 1] = new Lane(laneName, laneSchool, time);
+            lanes[i - 1] = new Lane(laneName, laneSchool, (int) time.getTime(), columns[6]);
         }
         sortLanes(lanes);
         return new Race(name, lanes, creationDate);
@@ -127,7 +127,7 @@ public class Race
             int indexOfMinimum = i;
             for (int j = i + 1; j < unsortedLanes.length; j++)
             {
-                if (unsortedLanes[j].time.getTime() < unsortedLanes[indexOfMinimum].time.getTime())
+                if (unsortedLanes[j].time < unsortedLanes[indexOfMinimum].time)
                 {
                     indexOfMinimum = j;
                 }
