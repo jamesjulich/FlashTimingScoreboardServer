@@ -22,7 +22,6 @@ public class ScoreboardSocket extends WebSocketServer
     public void onOpen(WebSocket conn, ClientHandshake handshake)
     {
         System.out.println("Client connected: " + conn.getRemoteSocketAddress().getHostName() + ":" + conn.getRemoteSocketAddress().getPort());
-        broadcast("{ \"name\":\"John\", \"age\":30, \"city\":\"New York\"}");
     }
 
     @Override
@@ -44,5 +43,12 @@ public class ScoreboardSocket extends WebSocketServer
     {
         this.broadcast(gson.toJson(race));
         System.out.println(gson.toJson(race));
+    }
+
+    //When the javascript portion detects that a blank JSON is received, it clears the board.
+    public void clearDisplay()
+    {
+        this.broadcast(gson.toJson(new Object()));
+        System.out.println("Scoreboard cleared.");
     }
 }

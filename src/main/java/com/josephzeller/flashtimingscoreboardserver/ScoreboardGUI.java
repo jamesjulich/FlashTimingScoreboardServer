@@ -23,6 +23,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     Timer timer;
 
     public ScoreboardGUI(ApplicationState appState) {
+        super("Flash Timing Scoreboard Panel");
         this.appState = appState;
         initComponents();
     }
@@ -365,6 +366,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_openScoreboardButtonActionPerformed
 
     private void clearDisplayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDisplayButtonActionPerformed
+        appState.scoreboardSocket.clearDisplay();
         // TODO add your handling code here:
     }//GEN-LAST:event_clearDisplayButtonActionPerformed
 
