@@ -33,7 +33,7 @@ public class Race
     public static Race fromFile(File file) throws FileNotFoundException, ParseException
     {
         String name = "";
-        Lane[] lanes = null;
+        ArrayList<Lane> lanes = new ArrayList();
         Date creationDate = new Date();
 
         /*
@@ -57,7 +57,11 @@ public class Race
             if (i == 0) //If we're currently parsing the first line
             {
                 name = columns[3]; //Grab the name of the race
-                lanes = new Lane[rows.size() - 1]; //Instantiate lanes variable
+                continue;
+            }
+
+            if (columns.length < 7) //If the lane is scratched or DQ'd.
+            {
                 continue;
             }
 
@@ -95,10 +99,11 @@ public class Race
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //Tells the dateFormat to parse the time without a timezone offset.
             time = dateFormat.parse(columns[6]);
 
-            lanes[i - 1] = new Lane(laneName, laneSchool, (int) time.getTime(), columns[6]);
+            lanes.add(new Lane(laneName, laneSchool, (int) time.getTime(), columns[6]));
         }
-        sortLanes(lanes);
-        return new Race(name, lanes, creationDate);
+        Lane[] laneArray = lanes.toArray(new Lane[lanes.size()]);
+        sortLanes(laneArray);
+        return new Race(name, laneArray, creationDate);
     }
 
     public static Race mergeRaces(String mergedName, Race[] races)

@@ -51,12 +51,8 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         displayButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        openScoreboardButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         selectFolderButton = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -120,13 +116,6 @@ public class ScoreboardGUI extends javax.swing.JFrame {
 
         jLabel4.setText("Ctrl+Click to select multiple races.");
 
-        openScoreboardButton.setText("Open Scoreboard in Browser");
-        openScoreboardButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openScoreboardButtonActionPerformed(evt);
-            }
-        });
-
         jLabel5.setText("Current Folder: Unselected");
         jLabel5.setMaximumSize(new java.awt.Dimension(940, 14));
 
@@ -172,8 +161,6 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                 .addGap(29, 29, 29)
                 .addComponent(jCheckBox1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(openScoreboardButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(clearDisplayButton)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -210,18 +197,9 @@ public class ScoreboardGUI extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCheckBox1)
-                    .addComponent(clearDisplayButton)
-                    .addComponent(openScoreboardButton))
+                    .addComponent(clearDisplayButton))
                 .addGap(21, 21, 21))
         );
-
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -240,8 +218,12 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void forgetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forgetButtonActionPerformed
-        if (raceList.getSelectedIndex() == -1)
+        if (raceList.getSelectedIndex() == -1 || raceList.getSelectedIndices().length > 1)
         {
+            JOptionPane.showMessageDialog(this,
+                    "Select a race to forget. Only one race can be forgotten at a time.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -334,7 +316,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         if (raceList.getSelectedIndices().length > 1)
         {
             JOptionPane.showMessageDialog(this,
-                    "Only one race can be displayed at a time. Please deselect one option.",
+                    "Only one race can be displayed at a time. Please deselect one+more of your options.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
             return;
@@ -360,10 +342,6 @@ public class ScoreboardGUI extends javax.swing.JFrame {
         appState.scoreboardSocket.displayRace(race);
         // TODO add your handling code here:
     }//GEN-LAST:event_displayButtonActionPerformed
-
-    private void openScoreboardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openScoreboardButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_openScoreboardButtonActionPerformed
 
     private void clearDisplayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDisplayButtonActionPerformed
         appState.scoreboardSocket.clearDisplay();
@@ -495,12 +473,8 @@ public class ScoreboardGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton mergeButton;
-    private javax.swing.JButton openScoreboardButton;
     private javax.swing.JList<String> raceList;
     private javax.swing.JScrollPane raceListScrollPane;
     private javax.swing.JButton selectFolderButton;
