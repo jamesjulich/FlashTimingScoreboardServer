@@ -356,7 +356,7 @@ public class ScoreboardGUI extends javax.swing.JFrame {
             Race race = null;
             try
             {
-                race = Race.fromFile(new File(appState.selectedFolder + "\\" + fileList.getModel().getElementAt(i)));
+                race = Race.fromFile(new File(appState.selectedFolder + System.getProperty("file.separator") + fileList.getModel().getElementAt(i)));
             }
             catch (FileNotFoundException e)
             {
